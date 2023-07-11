@@ -14,10 +14,14 @@ async function run() {
 
 		const storesDataV4 = storesCollectionV4.find()
 
+		let count = 0
 		for await (const store of storesDataV4) {
 			const result = await storesCollectionV5.insertOne(store)
 			console.log(`A document was inserted with the _id: ${result.insertedId}`);
+			count++
 		}
+
+		console.log(`Total of documents inserted: ${count}`)
 	}
 	finally {
 		await mongoDBV4.close()

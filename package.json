@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "migrate": "node migrate.js",
+    "rollback": "node rollback.js"
   },
   "keywords": [],
   "author": "",
