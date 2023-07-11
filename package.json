@@ -1,0 +1,17 @@
+{
+  "name": "migracao-mongodb-integration-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "mongodb": "^5.7.0"
+  },
+  "type": "module"
+}
