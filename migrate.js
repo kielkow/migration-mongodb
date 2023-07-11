@@ -1,22 +1,22 @@
 import 'dotenv/config'
 import { MongoClient } from 'mongodb'
 
-const mongoDBV4 = new MongoClient(process.env.ORIGIN_URL)
-const mongoDBV5 = new MongoClient(process.env.DESTINATION_URL)
+const mongoDBOrigin = new MongoClient(process.env.ORIGIN_URL)
+const mongoDBDestination = new MongoClient(process.env.DESTINATION_URL)
 
 async function run() {
 	try {
-		const dbV4 = mongoDBV4.db(process.env.ORIGIN_DB)
-		const dbV5 = mongoDBV5.db(process.env.DESTINATION_DB)
+		const dbOrigin = mongoDBOrigin.db(process.env.ORIGIN_DB)
+		const dbDestination = mongoDBDestination.db(process.env.DESTINATION_DB)
 
-		const storesCollectionV4 = dbV4.collection(process.env.ORIGIN_COLLECTION)
-		const storesCollectionV5 = dbV5.collection(process.env.DESTINATION_COLLECTION)
+		const collectionOrigin = dbOrigin.collection(process.env.ORIGIN_COLLECTION)
+		const collectionDestination = dbDestination.collection(process.env.DESTINATION_COLLECTION)
 
-		const storesDataV4 = storesCollectionV4.find()
+		const dataOrigin = collectionOrigin.find()
 
 		let count = 0
-		for await (const store of storesDataV4) {
-			const result = await storesCollectionV5.insertOne(store)
+		for await (const doc of dataOrigin) {
+			const result = await collectionDestination.insertOne(doc)
 			console.log(`A document was inserted with the _id: ${result.insertedId}`);
 			count++
 		}
@@ -24,8 +24,8 @@ async function run() {
 		console.log(`Total of documents inserted: ${count}`)
 	}
 	finally {
-		await mongoDBV4.close()
-		await mongoDBV5.close()
+		await mongoDBOrigin.close()
+		await mongoDBDestination.close()
 	}
 }
 

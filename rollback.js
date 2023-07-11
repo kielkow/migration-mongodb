@@ -1,8 +1,8 @@
 import 'dotenv/config'
 import { MongoClient, ObjectId } from 'mongodb'
 
-const mongoDBV4 = new MongoClient(process.env.ORIGIN_URL)
-const mongoDBV5 = new MongoClient(process.env.DESTINATION_URL)
+const mongoDBOrigin = new MongoClient(process.env.ORIGIN_URL)
+const mongoDBDestination = new MongoClient(process.env.DESTINATION_URL)
 
 const origin_ids = [
     '5fd917471d342d00166b1c66',
@@ -13,19 +13,19 @@ const origin_ids = [
 
 async function run() {
     try {
-        const dbV4 = mongoDBV4.db(process.env.ORIGIN_DB)
-        const dbV5 = mongoDBV5.db(process.env.DESTINATION_DB)
+        const dbOrigin = mongoDBOrigin.db(process.env.ORIGIN_DB)
+        const dbDestination = mongoDBDestination.db(process.env.DESTINATION_DB)
 
-        const storesCollectionV4 = dbV4.collection(process.env.ORIGIN_COLLECTION)
-        const storesCollectionV5 = dbV5.collection(process.env.DESTINATION_COLLECTION)
+        const collectionOrigin = dbOrigin.collection(process.env.ORIGIN_COLLECTION)
+        const collectionDestination = dbDestination.collection(process.env.DESTINATION_COLLECTION)
 
-        const storesDataV4 = storesCollectionV4.find()
+        const dataOrigin = collectionOrigin.find()
 
         let count = 0
-        for await (const store of storesDataV4) {
-            if (!origin_ids.includes(store._id)) {
-                await storesCollectionV5.deleteOne({ _id: new ObjectId(store._id)})
-                console.log(`A document was deleted with the _id: ${store._id}`);
+        for await (const doc of dataOrigin) {
+            if (!origin_ids.includes(doc._id)) {
+                await collectionDestination.deleteOne({ _id: new ObjectId(doc._id)})
+                console.log(`A document was deleted with the _id: ${doc._id}`);
                 count++
             }
         }
@@ -33,8 +33,8 @@ async function run() {
         console.log(`Total of documents deleted: ${count}`)
     }
     finally {
-        await mongoDBV4.close()
-        await mongoDBV5.close()
+        await mongoDBOrigin.close()
+        await mongoDBDestination.close()
     }
 }
 
